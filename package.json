@@ -7,12 +7,10 @@
     "doc": "docs",
     "test": "test"
   },
-  "scripts": {
-    "build": "npm run lint",
-    "start": "node src/index.js",
-    "start:dev": "npm run lint && nodemon --exec node src/index.js --unhandled-rejections=warn",
-    "test": "jest --detectOpenHandles --coverage",
-    "lint": "eslint src/**/*.js --fix"
+"scripts": {
+    "dev": "webpack --config=Scripts/config/webpack.dev.js --watch",
+    "build": "webpack --config=Scripts/config/webpack.prod.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
