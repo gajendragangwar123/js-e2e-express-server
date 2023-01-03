@@ -26,10 +26,10 @@ steps:
     Contents: |
       **\.js
       **\.json
-    TargetFolder: '$(build.artifactstagingdirectory)'
+    TargetFolder: './'
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: 'drop'
-    publishLocation: 'Container'
+    
     
