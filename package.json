@@ -7,8 +7,7 @@
     "doc": "docs",
     "test": "test"
   },
-"scripts": {
-"scripts": {
+  "scripts": {
     "build": "webpack --config webpack.config.js"
   },
   "repository": {
