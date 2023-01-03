@@ -53,7 +53,7 @@ stages:
                   targetType: 'inline'
                   script: |
                    sudo apt install unzip
-                   sudo unzip '$(Pipeline.Workspace)/drop/**/target/* 95.zip'
+                   sudo unzip '$(Pipeline.Workspace)/drop/**/target/* .zip'
             routeTraffic:
                 steps:
                 - script: echo routing traffic
