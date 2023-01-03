@@ -3,11 +3,6 @@
 # Add steps that analyze code, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
 
-trigger:
-- main
-
-pool:
-  vmImage: ubuntu-latest
 
 stages:
 - stage: Build
@@ -35,3 +30,40 @@ stages:
         replaceExistingArchive: true
     - upload: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
       artifact: drop
+- stage: deloy
+  displayName: deploy stage  
+  jobs: 
+   - deployment: VMDeploy
+     displayName: web
+     environment:
+       name: node-build
+       resourceType: VirtualMachine
+     strategy:
+          rolling:
+            maxParallel: 2  
+            preDeploy:
+              steps:
+              - download: current
+                artifact: drop
+              - script: echo initialize, cleanup, backup, install certs
+            deploy:
+              steps:
+              - task: Bash@3
+                inputs:
+                  targetType: 'inline'
+                  script: |
+                   sudo unzip '$(Pipeline.Workspace)/drop/**/target/* 95.zip'
+            routeTraffic:
+                steps:
+                - script: echo routing traffic
+            postRouteTraffic:
+                steps:
+                - script: echo health check post-route traffic
+            on:
+             failure:
+              steps:
+              - script: echo Restore from backup! This is on failure
+             success:
+              steps:
+              - script: echo Notify! This is on success
+  
