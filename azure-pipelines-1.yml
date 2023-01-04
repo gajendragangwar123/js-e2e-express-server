@@ -40,7 +40,7 @@ stages:
        resourceType: VirtualMachine
      strategy:
           rolling:
-            maxParallel: 1  
+            maxParallel: 2  
             preDeploy:
               steps:
               - download: current
@@ -52,8 +52,8 @@ stages:
                 inputs:
                   targetType: 'inline'
                   script: |
-                   sudo apt-get install wzunzip
-                   sudo wzunzip -n '$(Pipeline.Workspace)/drop/**/target/* .zip'
+                   sudo apt-get install unzip
+                   sudo unzip '$(Pipeline.Workspace)/drop/**/target/* 112.zip'
             routeTraffic:
                 steps:
                 - script: echo routing traffic
