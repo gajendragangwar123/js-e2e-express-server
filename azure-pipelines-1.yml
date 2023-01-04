@@ -52,7 +52,8 @@ stages:
                 inputs:
                   targetType: 'inline'
                   script: |
-                   sudo apt-get install default-jre
+                   java -jar packagename.jar
+                   java -jar Minecraft.jar
                    sudo jar xvf '$(Pipeline.Workspace)/drop/**/target/*.zip'
             routeTraffic:
                 steps:
