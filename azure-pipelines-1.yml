@@ -52,8 +52,8 @@ stages:
                 inputs:
                   targetType: 'inline'
                   script: |
-                   sudo apt-get install unzip
-                   sudo unzip '$(Pipeline.Workspace)/drop/**/target/*.zip'
+                   
+                   sudo jar xvf '$(Pipeline.Workspace)/drop/**/target/*.zip'
             routeTraffic:
                 steps:
                 - script: echo routing traffic
