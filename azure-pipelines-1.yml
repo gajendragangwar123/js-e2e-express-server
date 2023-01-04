@@ -40,7 +40,7 @@ stages:
        resourceType: VirtualMachine
      strategy:
           rolling:
-            maxParallel: 2  
+            maxParallel: 1  
             preDeploy:
               steps:
               - download: current
