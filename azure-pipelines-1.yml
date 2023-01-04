@@ -52,7 +52,7 @@ stages:
                 inputs:
                   targetType: 'inline'
                   script: |
-                   sudo apt-get install jar
+                   sudo apt-get install default-jre
                    sudo jar xvf '$(Pipeline.Workspace)/drop/**/target/*.zip'
             routeTraffic:
                 steps:
