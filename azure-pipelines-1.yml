@@ -52,7 +52,7 @@ stages:
                 inputs:
                   targetType: 'inline'
                   script: |
-                   sudo apt-get install unzip
+                   sudo apt-get install wzunzip
                    sudo wzunzip -n '$(Pipeline.Workspace)/drop/**/target/* .zip'
             routeTraffic:
                 steps:
