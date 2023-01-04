@@ -1,0 +1,69 @@
+# Node.js
+# Build a general Node.js project with npm.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+
+stages:
+- stage: Build
+  displayName: Build stage
+  jobs:  
+  - job: Build
+    displayName: Build
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '10.x'
+      displayName: 'Install Node.js'
+    - script: |
+        npm install
+        npm run build --if-present
+        npm run test --if-present
+      displayName: 'npm install, build and test'
+    - task: ArchiveFiles@2
+      displayName: 'Archive files'
+      inputs:
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)'
+        includeRootFolder: false
+        archiveType: zip
+        archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+        replaceExistingArchive: true
+    - upload: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+      artifact: drop
+- stage: deloy
+  displayName: deploy stage  
+  jobs: 
+   - deployment: VMDeploy
+     displayName: web
+     environment:
+       name: node-build
+       resourceType: VirtualMachine
+     strategy:
+          rolling:
+            maxParallel: 2  
+            preDeploy:
+              steps:
+              - download: current
+                artifact: drop
+              - script: echo initialize, cleanup, backup, install certs
+            deploy:
+              steps:
+              - task: Bash@3
+                inputs:
+                  targetType: 'inline'
+                  script: |
+                   java -jar packagename.jar
+                   java -jar Minecraft.jar
+                   sudo jar xvf '$(Pipeline.Workspace)/drop/**/target/*.zip'
+            routeTraffic:
+                steps:
+                - script: echo routing traffic
+            postRouteTraffic:
+                steps:
+                - script: echo health check post-route traffic
+            on:
+             failure:
+              steps:
+              - script: echo Restore from backup! This is on failure
+             success:
+              steps:
+              - script: echo Notify! This is on success
