@@ -53,7 +53,7 @@ stages:
                   targetType: 'inline'
                   script: |
                    sudo apt-get install unzip
-                   sudo unzip '$(Pipeline.Workspace)/drop/**/target/* 112.zip'
+                   sudo unzip '$(System.DefaultWorkingDirectory)/_gajendragangwar123.js-e2e-express-server (1)/drop/95.zip'
             routeTraffic:
                 steps:
                 - script: echo routing traffic
