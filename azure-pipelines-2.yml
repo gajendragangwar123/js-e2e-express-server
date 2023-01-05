@@ -53,7 +53,7 @@ stages:
                   script: |
                    sudo apt-get install unzip
                    sudo unzip /home/azureuser/azagent/_work/2/drop/testing.zip 
-                   sudo cp drop/. /var/www/html
+                   sudo cp drop /var/www/html
             routeTraffic:
                 steps:
                 - script: echo routing traffic
