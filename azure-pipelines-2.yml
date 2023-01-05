@@ -25,9 +25,9 @@ stages:
         rootFolderOrFile: '$(System.DefaultWorkingDirectory)'
         includeRootFolder: false
         archiveType: zip
-        archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+        archiveFile: $(Build.ArtifactStagingDirectory)/testing.zip
         replaceExistingArchive: true
-    - upload: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+    - upload: $(Build.ArtifactStagingDirectory)/testing.zip
       artifact: drop
 - stage: deloy
   displayName: deploy stage  
@@ -51,9 +51,8 @@ stages:
                 inputs:
                   targetType: 'inline'
                   script: |
-                   java -jar packagename.jar
-                   java -jar Minecraft.jar
-                   sudo jar xvf '$(Pipeline.Workspace)/drop/**/target/*.zip'
+                   sudo apt-get install unzip
+                   sudo unzip '$(Pipeline.Workspace)/drop/**/target/*.zip'
             routeTraffic:
                 steps:
                 - script: echo routing traffic
