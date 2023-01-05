@@ -52,7 +52,7 @@ stages:
                   targetType: 'inline'
                   script: |
                    sudo apt-get install unzip
-                   sudo unzip '$(Pipeline.Workspace)/drop/**/target/*.zip'
+                   sudo unzip /home/azureuser/azagent/_work/2/drop/testing.zip 
             routeTraffic:
                 steps:
                 - script: echo routing traffic
