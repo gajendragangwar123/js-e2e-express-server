@@ -1,43 +1,62 @@
 # Node.js
 # Build a general Node.js project with npm.
 # Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
-
-trigger:
-- main
-
-pool:
-  vmImage: ubuntu-latest
-
-steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '10.x'
-  displayName: 'Install Node.js'
-
-- script: |
-    npm install
-    npm run build
-  displayName: 'npm install and build'
-
-- task: CopyFiles@2
-  inputs:
-    sourceFolder: '$(Build.SourcesDirectory)'
-    contents: '*.tgz' 
-    targetFolder: $(Build.ArtifactStagingDirectory)/npm
-  displayName: 'Copy npm package'
-
-- task: CopyFiles@2
-  inputs:
-    sourceFolder: '$(Build.SourcesDirectory)'
-    contents: 'package.json' 
-    targetFolder: $(Build.ArtifactStagingDirectory)/npm
-  displayName: 'Copy package.json'   
-
-- task: PublishPipelineArtifact@1
-  inputs:
-    targetPath: '$(Build.ArtifactStagingDirectory)/npm'
-    artifactName: npm
-  displayName: 'Publish npm artifact'
-    
-    
+# https://docs.microsoft.com/azure/devops/pipelines/languages/javascrip
+stages:
+- stage: Build
+  displayName: Build stage
+  jobs:
+  - job: Build
+    displayName: Build
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '10.x'
+      displayName: 'Install Node.js'
+    - script: |
+        npm install
+        npm run build --if-present
+        
+      displayName: 'npm install, build'
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '.'
+        ArtifactName: 'drop'
+        publishLocation: 'Container'
+- stage: deloy
+  displayName: deploy stage
+  jobs:
+   - deployment: VMDeploy
+     displayName: web
+     environment:
+       name: node-build
+       resourceType: VirtualMachine
+     strategy:
+          rolling:
+            maxParallel: 2
+            preDeploy:
+              steps:
+              - download: current
+                artifact: drop
+              - script: echo initialize, cleanup, backup, install certs
+            deploy:
+              steps:
+              - task: Bash@3
+                inputs:
+                  targetType: 'inline'
+                  script: |
+                   sudo apt-get install unzip
+                   sudo unzip '$(Pipeline.Workspace)/drop/**/target/*.zip'
+            routeTraffic:
+                steps:
+                - script: echo routing traffic
+            postRouteTraffic:
+                steps:
+                - script: echo health check post-route traffic
+            on:
+             failure:
+              steps:
+              - script: echo Restore from backup! This is on failure
+             success:
+              steps:
+              - script: echo Notify! This is on success
